@@ -1,9 +1,14 @@
 package main
 
 import (
-"github/LD-43/ui"
+	"fmt"
+	"github/LD-43/level"
+	"github/LD-43/ui"
 )
 
 func main() {
 	ui.WelcomeUser()
+	myLevel := level.New(1)
+	fmt.Println("--------------")
+	myLevel.Load()
 }
