@@ -40,6 +40,9 @@ func New(levelID int) *level {
 }
 
 func (l level) Load() bool {
+	// Reset sacs counter to 0
+	l.sacs = 0
+
 	// Initialize streamreader
 	file, err := os.Open(l.levelPath)
 	if err != nil {
