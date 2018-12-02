@@ -31,12 +31,14 @@ type level struct {
 	levelSlice [][]int
 }
 
+// Constructor
 func New(levelID int) *level {
 	newLevel := new(level)
 	newLevel.levelPath = "lvl" + strconv.Itoa(levelID) + ".txt"
 
 	newLevel.Load()
 
+	// return &newLevel
 	return newLevel
 }
 
@@ -71,22 +73,11 @@ func (l level) Load() bool {
 	// Read in nfmt from fifth line of levelPath.
 	scanner.Scan()
 	l.nfmt, err = strconv.Atoi(scanner.Text())
-
-	// Debugging
-	fmt.Println("Just before scanning in the level proper.")
+	fmt.Println("l.nfmt: ", l.nfmt) // Debugging
 
 	// Nullifies l.levelSlice
 	l.levelSlice = nil
-	// Reslices l.levelSlice to [m][n]
-	// l.levelSlice = l.levelSlice[:0][:0]
-
-	// Debugging
-	fmt.Println("Just after Slicing to size 0")
-
-	// l.levelSlice = l.levelSlice[:l.m][:l.n]
-
-	// Debugging
-	fmt.Println("Just after reslicing l.levelSlice.")
+	fmt.Println("l.nfmt After nilling levelSlice: ", l.nfmt) // Debugging
 
 	// Read in data to fill it out.
 	for i := 0; i < l.m; i++ {
@@ -96,13 +87,7 @@ func (l level) Load() bool {
 		tempStringRowSlice := strings.Split(scanner.Text(), " ")
 		tempIntRowSlice := []int{}
 
-		fmt.Println("In i loop...")                             // Debugging
-		fmt.Println("scanner.Text(): ", scanner.Text())         // Debugging
-		fmt.Println("tempStringRowSlice: ", tempStringRowSlice) // Debugging
-		fmt.Println("-----")                                    // Debugging
-
 		for j := 0; j < l.n; j++ {
-			fmt.Println("Entered j loop...") // Debugging
 
 			tempIntVal := 0
 			tempIntVal, err = strconv.Atoi(tempStringRowSlice[j])
@@ -111,25 +96,66 @@ func (l level) Load() bool {
 			}
 
 			tempIntRowSlice = append(tempIntRowSlice, tempIntVal)
-
-			fmt.Println("tempIntVal: ", strconv.Itoa(tempIntVal))
-			fmt.Println("tempIntRowSlice: ", tempIntRowSlice) // Debugging
-			fmt.Println("Successfully appended in j loop")
-			fmt.Println("-----") // Debugging
 		} // End for
 
-		fmt.Println("In i loop after j loop...")                  // Debugging
-		fmt.Println("l.levelSlice before append: ", l.levelSlice) // Debugging
 		l.levelSlice = append(l.levelSlice, tempIntRowSlice)
-		fmt.Println("l.levelSlice after append: ", l.levelSlice) // Debugging
 	} // End for
-
-	// Debugging
-	fmt.Println("info: ", l.info)
-	fmt.Println("m value: ", strconv.Itoa(l.m))
-	fmt.Println("n value: ", strconv.Itoa(l.n))
-	fmt.Println("mfmt: ", strconv.Itoa(l.mfmt))
-	fmt.Println("nfmt: ", strconv.Itoa(l.nfmt))
+	fmt.Println("l.nfmt at the end of Load: ", l.nfmt) // Debugging
 
 	return false
+}
+
+func (l level) Render() bool {
+	fmt.Println("Render reached") // Debugging
+	fmt.Println("l.nfmt at the start of Render: ", l.nfmt)
+	testString := l.cellToString(234)
+	fmt.Println("testString: \"" + testString + "\"") // Debugging
+	testString = l.cellToString(48)
+	fmt.Println("testString: \"" + testString + "\"") // Debugging
+	testString = l.cellToString(4)
+	fmt.Println("testString: \"" + testString + "\"") // Debugging
+	return false
+}
+
+func (l level) cellToString(input int) string {
+	outputString := ""
+
+	if input == 0 {
+		// Adds nfmt spaces to outputString
+		for i := 0; i < l.nfmt; i++ {
+			outputString += " "
+		}
+	} else if input > 0 {
+		// Normal input
+		inputString := strconv.Itoa(input)
+
+		fmt.Println("input >0 reached.") // Debugging
+		inputLen := strings.LastIndexAny(inputString, "0123456789") + 1
+		fmt.Println("inputLen: ", strconv.Itoa(inputLen)) // Debugging
+		fmt.Println("l.nfmt: ", strconv.Itoa(l.nfmt))     // Debugging
+
+		if inputLen < l.nfmt {
+			spacesToAdd := l.nfmt - inputLen
+			for i := spacesToAdd; i > 0; i-- {
+				outputString += " "
+			} // End for
+			fmt.Println("outputString: \"" + outputString + "\"")
+			outputString += inputString
+			fmt.Println("inputString: \"" + inputString + "\"")
+		} else {
+			// Simple case
+			outputString = inputString
+		}
+	} else {
+		switch input {
+		case -1: // Wall
+			// Adds nfmt asterisks to outputString
+			for i := 0; i < l.nfmt; i++ {
+				outputString += "*"
+			}
+		} // End switch
+	} // End if-else
+
+	fmt.Println("Exiting cellToString") // Debugging
+	return outputString
 }
