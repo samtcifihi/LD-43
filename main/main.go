@@ -10,5 +10,4 @@ func main() {
 	ui.WelcomeUser()
 	myLevel := level.New(1)
 	fmt.Println("--------------")
-	myLevel.Load()
 }

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 )
 
 type level struct {
@@ -71,15 +72,64 @@ func (l level) Load() bool {
 	scanner.Scan()
 	l.nfmt, err = strconv.Atoi(scanner.Text())
 
-	// Change l.levelSlice to [m][n]
-	// Read in data to fill it out.
+	// Debugging
+	fmt.Println("Just before scanning in the level proper.")
+
+	// Nullifies l.levelSlice
+	l.levelSlice = nil
+	// Reslices l.levelSlice to [m][n]
+	// l.levelSlice = l.levelSlice[:0][:0]
 
 	// Debugging
-	fmt.Println("info: " + l.info)
-	fmt.Println("m value: " + strconv.Itoa(l.m))
-	fmt.Println("n value: " + strconv.Itoa(l.n))
-	fmt.Println("mfmt: " + strconv.Itoa(l.mfmt))
-	fmt.Println("nfmt: " + strconv.Itoa(l.nfmt))
+	fmt.Println("Just after Slicing to size 0")
+
+	// l.levelSlice = l.levelSlice[:l.m][:l.n]
+
+	// Debugging
+	fmt.Println("Just after reslicing l.levelSlice.")
+
+	// Read in data to fill it out.
+	for i := 0; i < l.m; i++ {
+		scanner.Scan() // Reads in the next line
+
+		// Splits the output of the scanner into a slice, space delineated
+		tempStringRowSlice := strings.Split(scanner.Text(), " ")
+		tempIntRowSlice := []int{}
+
+		fmt.Println("In i loop...")                             // Debugging
+		fmt.Println("scanner.Text(): ", scanner.Text())         // Debugging
+		fmt.Println("tempStringRowSlice: ", tempStringRowSlice) // Debugging
+		fmt.Println("-----")                                    // Debugging
+
+		for j := 0; j < l.n; j++ {
+			fmt.Println("Entered j loop...") // Debugging
+
+			tempIntVal := 0
+			tempIntVal, err = strconv.Atoi(tempStringRowSlice[j])
+			if err != nil {
+				return true
+			}
+
+			tempIntRowSlice = append(tempIntRowSlice, tempIntVal)
+
+			fmt.Println("tempIntVal: ", strconv.Itoa(tempIntVal))
+			fmt.Println("tempIntRowSlice: ", tempIntRowSlice) // Debugging
+			fmt.Println("Successfully appended in j loop")
+			fmt.Println("-----") // Debugging
+		} // End for
+
+		fmt.Println("In i loop after j loop...")                  // Debugging
+		fmt.Println("l.levelSlice before append: ", l.levelSlice) // Debugging
+		l.levelSlice = append(l.levelSlice, tempIntRowSlice)
+		fmt.Println("l.levelSlice after append: ", l.levelSlice) // Debugging
+	} // End for
+
+	// Debugging
+	fmt.Println("info: ", l.info)
+	fmt.Println("m value: ", strconv.Itoa(l.m))
+	fmt.Println("n value: ", strconv.Itoa(l.n))
+	fmt.Println("mfmt: ", strconv.Itoa(l.mfmt))
+	fmt.Println("nfmt: ", strconv.Itoa(l.nfmt))
 
 	return false
 }
