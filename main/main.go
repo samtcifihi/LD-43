@@ -15,5 +15,14 @@ func main() {
 	myLevel.Load()
 	myLevel.Render()
 
+	myLevel.Sac(1, 2)
+	myLevel.Render()
+
+	myLevel.Sac(3, 1)
+	myLevel.Render()
+
+	myLevel.Sac(3, 3)
+	myLevel.Render()
+
 	fmt.Println("Execution Finished")
 }

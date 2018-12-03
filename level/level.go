@@ -107,7 +107,7 @@ func (l level) Render() bool {
 		fmt.Println()
 	}
 
-	// Prints info fo the level
+	// Prints info of the level
 	fmt.Println(l.info)
 	fmt.Println("Sacs:", l.sacs)
 
@@ -156,6 +156,22 @@ func (l level) Render() bool {
 	return false
 }
 
+func (l *level) Sac(i int, j int) bool {
+	// Check if i and j are within bounds. If not, return true and change nothing
+	if ((i - 1) < l.m) && ((j - 1) < l.n) {
+		// Do nothing
+	} else {
+		return true
+	}
+
+	// Sac the appropriate cell.
+	l.levelSlice[i-1][j-1] = 0
+
+	// Increment Sac Count
+	l.sacs++
+	return false
+}
+
 func (l level) cellToString(input int) string {
 	outputString := ""
 
@@ -169,9 +185,10 @@ func (l level) cellToString(input int) string {
 		// Normal input
 		inputString := strconv.Itoa(input)
 
-		inputLen := strings.LastIndexAny(inputString, "0123456789") + 1
+		// inputLen := strings.LastIndexAny(inputString, "0123456789") + 1
+		inputLen := len(inputString)
 
-		if inputLen < l.nfmt {
+		if inputLen <= l.nfmt {
 			// Adds an extra to put space between entries
 			spacesToAdd := l.nfmt - inputLen + 1
 			for i := spacesToAdd; i > 0; i-- {
