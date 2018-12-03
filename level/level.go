@@ -38,8 +38,6 @@ func New(levelID int) *level {
 
 	newLevel.Load()
 
-	fmt.Println("nfmt in new after Load has run:", newLevel.nfmt) // Debugging
-
 	return newLevel
 }
 
@@ -74,11 +72,9 @@ func (l *level) Load() bool {
 	// Read in nfmt from fifth line of levelPath.
 	scanner.Scan()
 	l.nfmt, err = strconv.Atoi(scanner.Text())
-	fmt.Println("l.nfmt: ", l.nfmt) // Debugging
 
 	// Nullifies l.levelSlice
 	l.levelSlice = nil
-	fmt.Println("l.nfmt After nilling levelSlice: ", l.nfmt) // Debugging
 
 	// Read in data to fill it out.
 	for i := 0; i < l.m; i++ {
@@ -101,20 +97,62 @@ func (l *level) Load() bool {
 
 		l.levelSlice = append(l.levelSlice, tempIntRowSlice)
 	} // End for
-	fmt.Println("l.nfmt at the end of Load: ", l.nfmt) // Debugging
 
 	return false
 }
 
 func (l level) Render() bool {
-	fmt.Println("Render reached") // Debugging
-	fmt.Println("l.nfmt at the start of Render: ", l.nfmt)
-	testString := l.cellToString(234)
-	fmt.Println("testString: \"" + testString + "\"") // Debugging
-	testString = l.cellToString(48)
-	fmt.Println("testString: \"" + testString + "\"") // Debugging
-	testString = l.cellToString(4)
-	fmt.Println("testString: \"" + testString + "\"") // Debugging
+	// Visual distinction
+	for i := 0; i < 6; i++ {
+		fmt.Println()
+	}
+
+	// Prints info fo the level
+	fmt.Println(l.info)
+	fmt.Println("Sacs:", l.sacs)
+
+	// Prints the column headers
+	tempLineString := "  " + "  "
+	for i := 1; i <= l.n; i++ {
+		tempLineString += l.cellToString(i)
+	}
+	fmt.Println(tempLineString)
+
+	// Prints a divider
+	tempLineString = "  " + "  "
+	for i := 1; i <= l.n; i++ {
+		for j := l.nfmt; j >= 0; j-- {
+			tempLineString += "-"
+		}
+	}
+	fmt.Println(tempLineString)
+
+	// Prints the remaining lines
+	for i := 0; i < l.m; i++ {
+		// Print Row header
+		tempnfmt := l.nfmt
+		l.nfmt = 2
+		tempLineString = l.cellToString(i + 1)
+		l.nfmt = tempnfmt
+
+		// Print a divider
+		tempLineString += "|"
+
+		// Print the values of the cells in the row
+		for j := 0; j < l.n; j++ {
+			tempLineString += l.cellToString(l.levelSlice[i][j])
+		}
+
+		// Actually outputs tempLineString
+		fmt.Println(tempLineString)
+
+		// Prints any extra blank lines (number extra == mfmt) below
+		for mf := l.mfmt; mf > 0; mf-- {
+			tempLineString = "  " + " |"
+		}
+		fmt.Println(tempLineString)
+	}
+
 	return false
 }
 
@@ -122,7 +160,8 @@ func (l level) cellToString(input int) string {
 	outputString := ""
 
 	if input == 0 {
-		// Adds nfmt spaces to outputString
+		// Adds nfmt + 1 spaces to outputString
+		outputString = " "
 		for i := 0; i < l.nfmt; i++ {
 			outputString += " "
 		}
@@ -130,19 +169,15 @@ func (l level) cellToString(input int) string {
 		// Normal input
 		inputString := strconv.Itoa(input)
 
-		fmt.Println("input >0 reached.") // Debugging
 		inputLen := strings.LastIndexAny(inputString, "0123456789") + 1
-		fmt.Println("inputLen: ", strconv.Itoa(inputLen)) // Debugging
-		fmt.Println("l.nfmt: ", strconv.Itoa(l.nfmt))     // Debugging
 
 		if inputLen < l.nfmt {
-			spacesToAdd := l.nfmt - inputLen
+			// Adds an extra to put space between entries
+			spacesToAdd := l.nfmt - inputLen + 1
 			for i := spacesToAdd; i > 0; i-- {
 				outputString += " "
 			} // End for
-			fmt.Println("outputString: \"" + outputString + "\"")
 			outputString += inputString
-			fmt.Println("inputString: \"" + inputString + "\"")
 		} else {
 			// Simple case
 			outputString = inputString
@@ -150,13 +185,13 @@ func (l level) cellToString(input int) string {
 	} else {
 		switch input {
 		case -1: // Wall
-			// Adds nfmt asterisks to outputString
+			// Adds nfmt asterisks and a leading space to outputString
+			outputString = " "
 			for i := 0; i < l.nfmt; i++ {
 				outputString += "*"
 			}
 		} // End switch
 	} // End if-else
 
-	fmt.Println("Exiting cellToString") // Debugging
 	return outputString
 }

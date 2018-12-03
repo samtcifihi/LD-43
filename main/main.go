@@ -8,11 +8,12 @@ import (
 
 func main() {
 	ui.WelcomeUser()
+
 	myLevel := level.New(1)
 	myLevel.Render()
 
-	fmt.Println("--------------")
-
 	myLevel.Load()
 	myLevel.Render()
+
+	fmt.Println("Execution Finished")
 }
