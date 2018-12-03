@@ -38,11 +38,12 @@ func New(levelID int) *level {
 
 	newLevel.Load()
 
-	// return &newLevel
+	fmt.Println("nfmt in new after Load has run:", newLevel.nfmt) // Debugging
+
 	return newLevel
 }
 
-func (l level) Load() bool {
+func (l *level) Load() bool {
 	// Reset sacs counter to 0
 	l.sacs = 0
 
