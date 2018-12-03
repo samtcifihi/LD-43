@@ -3,6 +3,7 @@ package level
 import (
 	"bufio"
 	"fmt"
+	"github/LD-43/mymath"
 	"os"
 	"strconv"
 	"strings"
@@ -27,7 +28,6 @@ type level struct {
 	nfmt int
 
 	// The 2-D slice to hold the level
-	// var levelSlice := make([][]int, 1)
 	levelSlice [][]int
 }
 
@@ -211,4 +211,95 @@ func (l level) cellToString(input int) string {
 	} // End if-else
 
 	return outputString
+}
+
+func (l level) CheckWinCondition() bool {
+	continueLoop := true
+	// Checks all rows for any which are not pairwise coprime
+	for i := 0; i < l.m; i++ {
+		// Select the next row to check and assign it to b
+		b := l.levelSlice[i]
+
+		for continueLoop == true {
+			// Pass b into wallthrower, and assign the slice to check if all elements are coprime to a, and teh slice of whatever is leftover to b, to be processed in the next iteration of the loop.
+			a, b := wallThrower(b)
+			// use SliceCoprime to check a. It will return true if it is pairwise coprime. If it is not, we can return false, otherwise we must continue
+			isCoprime, _ := mymath.SliceCoprime(a)
+			if isCoprime == false {
+				return false
+			}
+
+			// Check if b has anything in it. If not, there is nothing more to process and the outer for loop can continue
+			if b == nil {
+				continueLoop = false
+			}
+		} // End for
+	} // End for
+
+	// Checks all columns for any which are not pairwise coprime
+	for i := 0; i < l.n; i++ {
+		// Select the next column to check and assign it to b
+		b := l.levelSlice[:][i]
+
+		continueLoop = true
+		for continueLoop == true {
+			// Pass b into wallthrower, and assign the slice to check if all elements are coprime to a, and teh slice of whatever is leftover to b, to be processed in the next iteration of the loop.
+			a, b := wallThrower(b)
+			// use SliceCoprime to check a. It will return true if it is pairwise coprime. If it is not, we can return false, otherwise we must continue
+			isCoprime, _ := mymath.SliceCoprime(a)
+			if isCoprime == false {
+				return false
+			}
+
+			// Check if b has anything in it. If not, there is nothing more to process and the outer for loop can continue
+			if b == nil {
+				continueLoop = false
+			}
+		} // End for
+	} // End for
+
+	// If both loops have not found any reason to return false, then everything that must be coprime is coprime and we can return true
+	return true
+}
+
+// Takes in a slice and splits it into a group of positive integers, and everything after that point, and returns both
+func wallThrower(inputSlice []int) ([]int, []int) {
+	// Beginning, midpoint, and endpoint, roughly speaking
+	var a, b, c int
+
+	// Step 0: assign a
+	// Step 1: assign b
+	// Step 2: assign c
+	currentStep := 0
+
+	for i, v := range inputSlice {
+		// Check which step we're on
+		switch currentStep {
+		case 0:
+			// If the current element is >= 1, assign its index to a and continue to the next step
+			if v >= 1 {
+				a = i
+				currentStep++
+			}
+		case 1:
+			// If the current element is no longer >= 1, assign its index to b, and the next index to c. Then continue to the last step
+			if v < 1 {
+				b = i
+				c = i + 1
+				currentStep++
+			}
+		case 2:
+			if v >= 1 {
+				c = len(inputSlice)
+			}
+		} // End switch
+	} // End for
+
+	// If there are no >= 1 numbers in the inputSlice, return something which will fit that situation
+	if currentStep == 0 {
+		return []int{1}, nil
+	}
+
+	// a, b, and c are now assigned values. Return the cleaned up inputSlice and the extra at the end. Note that the second return will be empty if there are no >= 1 elements left in it.
+	return inputSlice[a:b], inputSlice[(b + 1):c]
 }
