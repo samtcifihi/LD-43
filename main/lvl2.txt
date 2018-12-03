@@ -1,0 +1,8 @@
+Note that prime numbers are always coprime with eachother. Find the non-prime numbers for maximum efficiency.
+3
+3
+2
+3
+0 5 3
+19 51 17
+31 29 119

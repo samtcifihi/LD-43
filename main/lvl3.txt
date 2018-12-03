@@ -1,0 +1,8 @@
+Numbers separated by a barrier ("*") need not be coprime even if in the same row/column.
+3
+3
+2
+3
+-1 5 0
+12 -1 36
+10 25 0

@@ -1,8 +1,6 @@
-This is level 1.
-3
+The goal of this game is to sacrifice numbers until all of the numbers in any row or column are coprime with all other numbers in that row or column (pairwise coprime). Enter coordinates in the form "[row],[col]" Try to minimize the number of sacs necessary on each level.
+1
 3
 2
-2
+1
 2 6 3
-0 12 0
-4 -1 6
