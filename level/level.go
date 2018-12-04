@@ -214,15 +214,21 @@ func (l level) cellToString(input int) string {
 }
 
 func (l level) CheckWinCondition() bool {
-	continueLoop := true
+	continueLoop1 := true
+	var a []int
+	b := l.levelSlice[0]
+
 	// Checks all rows for any which are not pairwise coprime
 	for i := 0; i < l.m; i++ {
 		// Select the next row to check and assign it to b
-		b := l.levelSlice[i]
+		b = l.levelSlice[i]
 
-		for continueLoop == true {
+		continueLoop1 = true
+		for continueLoop1 == true {
 			// Pass b into wallthrower, and assign the slice to check if all elements are coprime to a, and teh slice of whatever is leftover to b, to be processed in the next iteration of the loop.
-			a, b := wallThrower(b)
+			c, d, keepCallingWallThrower := wallThrower(b)
+			a = c
+			b = d
 			// use SliceCoprime to check a. It will return true if it is pairwise coprime. If it is not, we can return false, otherwise we must continue
 			isCoprime, _ := mymath.SliceCoprime(a)
 			if isCoprime == false {
@@ -230,30 +236,37 @@ func (l level) CheckWinCondition() bool {
 			}
 
 			// Check if b has anything in it. If not, there is nothing more to process and the outer for loop can continue
-			if b == nil {
-				continueLoop = false
+			if keepCallingWallThrower == false {
+				continueLoop1 = false
 			}
 		} // End for
 	} // End for
 
+	continueLoop2 := true
 	// Checks all columns for any which are not pairwise coprime
 	for i := 0; i < l.n; i++ {
 		// Select the next column to check and assign it to b
-		b := l.levelSlice[:][i]
+		var e []int
+		var f []int
+		for _, value := range l.levelSlice {
+			f = append(f, value[i])
+		}
 
-		continueLoop = true
-		for continueLoop == true {
+		continueLoop2 = true
+		for continueLoop2 == true {
 			// Pass b into wallthrower, and assign the slice to check if all elements are coprime to a, and teh slice of whatever is leftover to b, to be processed in the next iteration of the loop.
-			a, b := wallThrower(b)
+			g, h, keepCallingWallThrower := wallThrower(f)
+			e = g
+			f = h
 			// use SliceCoprime to check a. It will return true if it is pairwise coprime. If it is not, we can return false, otherwise we must continue
-			isCoprime, _ := mymath.SliceCoprime(a)
+			isCoprime, _ := mymath.SliceCoprime(e)
 			if isCoprime == false {
 				return false
 			}
 
 			// Check if b has anything in it. If not, there is nothing more to process and the outer for loop can continue
-			if b == nil {
-				continueLoop = false
+			if keepCallingWallThrower == false {
+				continueLoop2 = false
 			}
 		} // End for
 	} // End for
@@ -262,8 +275,8 @@ func (l level) CheckWinCondition() bool {
 	return true
 }
 
-// Takes in a slice and splits it into a group of positive integers, and everything after that point, and returns both
-func wallThrower(inputSlice []int) ([]int, []int) {
+// Takes in a slice and splits it into a group of positive integers, and everything after that point, and returns both, as well as a bool that indicates whether or not it should continue
+func wallThrower(inputSlice []int) ([]int, []int, bool) {
 	// Beginning, midpoint, and endpoint, roughly speaking
 	var a, b, c int
 
@@ -281,6 +294,7 @@ func wallThrower(inputSlice []int) ([]int, []int) {
 				a = i
 				currentStep++
 			}
+			break
 		case 1:
 			// If the current element is no longer >= 1, assign its index to b, and the next index to c. Then continue to the last step
 			if v < 1 {
@@ -288,18 +302,29 @@ func wallThrower(inputSlice []int) ([]int, []int) {
 				c = i + 1
 				currentStep++
 			}
+			break
 		case 2:
 			if v >= 1 {
 				c = len(inputSlice)
 			}
+			break
 		} // End switch
 	} // End for
 
 	// If there are no >= 1 numbers in the inputSlice, return something which will fit that situation
-	if currentStep == 0 {
-		return []int{1}, nil
+	if currentStep != 1 {
+		return1 := make([]int, 1)
+		return1[0] = 1
+		return2 := make([]int, 0)
+		return return1, return2, false
 	}
 
 	// a, b, and c are now assigned values. Return the cleaned up inputSlice and the extra at the end. Note that the second return will be empty if there are no >= 1 elements left in it.
-	return inputSlice[a:b], inputSlice[(b + 1):c]
+	if b < a {
+		b = a
+	}
+	if c < b {
+		c = b
+	}
+	return inputSlice[a:b], inputSlice[b:c], true
 }

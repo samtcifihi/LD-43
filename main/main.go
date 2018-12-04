@@ -17,5 +17,11 @@ func main() {
 	gameWon := myLevel.CheckWinCondition()
 	fmt.Println("Game Won?:", gameWon)
 
+	// Debugging
+	myLevel.Sac(3, 1)
+	myLevel.Render()
+	gameWon = myLevel.CheckWinCondition()
+	fmt.Println("Game Won?:", gameWon)
+
 	fmt.Println("Execution Finished") // Debugging
 }
